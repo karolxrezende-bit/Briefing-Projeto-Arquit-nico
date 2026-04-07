@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Briefing | Projeto Arquitetônico Residencial</title>
+  <style>
+    :root {
+      --bg: #0f0f10;
+      --card: rgba(28, 28, 30, 0.9);
+      --card-strong: rgba(36, 36, 38, 0.96);
+      --text: #f5f5f5;
+      --muted: #a1a1a6;
+      --line: rgba(255, 255, 255, 0.08);
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: radial-gradient(circle at top left, rgba(255,255,255,.04), transparent 28%), linear-gradient(180deg, #0b0b0c 0%, #121214 50%, #18181b 100%);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 18px 80px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #000000 0%, #111113 38%, #1c1c1e 72%, #2c2c2e 100%);
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      padding: 34px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(255,255,255,.08), transparent 22%), linear-gradient(120deg, transparent 0%, rgba(255,255,255,.03) 35%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+      flex: 1 1 620px;
+    }
+
+    .brand-logo {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .brand-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      padding: 12px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 38px;
+      line-height: 1.05;
+      letter-spacing: -.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,.74);
+      line-height: 1.72;
+      max-width: 820px;
+      font-size: 15px;
+    }
+
+    .hero-panel {
+      min-width: 220px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-panel-title {
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.5);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .hero-panel strong {
+      font-size: 15px;
+      font-weight: 800;
+      color: #f5f5f5;
+      display: block;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+      padding: 10px;
+      border-radius: 20px;
+    }
+
+    .progress-card,
+    .tool-btn,
+    .small-btn {
+      background: var(--card-strong);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .progress-card { padding: 16px 18px; }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: #232326;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(135deg, #3a3a3c, #8a8a8f);
+      transition: width .25s ease;
+    }
+
+    .tool-btn,
+    .small-btn {
+      padding: 0 18px;
+      min-height: 58px;
+      font-size: 14px;
+      font-weight: 800;
+      color: white;
+      background: linear-gradient(135deg, #2c2c2e, #3a3a3c);
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .small-btn {
+      min-height: auto;
+      padding: 12px 16px;
+      font-size: 13px;
+      border-radius: 12px;
+      box-shadow: none;
+    }
+
+    .tool-btn:hover,
+    .small-btn:hover { transform: translateY(-1px); }
+
+    .small-btn.secondary {
+      background: rgba(255,255,255,.04);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
+
+    .section {
+      grid-column: span 12;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .section h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .section p.desc {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 820px;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field,
+    .field-full {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ededee;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.08);
+      background: #1f1f21;
+      color: #f5f5f5;
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 14px;
+      outline: none;
+      transition: .2s ease;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    input::placeholder,
+    textarea::placeholder { color: #8e8e93; }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #8a8a8f;
+      background: #262628;
+      box-shadow: 0 0 0 4px rgba(138,138,143,.12);
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.02);
+    }
+
+    .option input { accent-color: #8a8a8f; }
+
+    .dynamic-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .dynamic-item {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.02);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .item-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #f1f1f2;
+    }
+
+    .inline-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .print-cover {
+      display: none;
+    }
+
+    .print-cover-inner {
+      position: relative;
+      min-height: 257mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20mm 14mm;
+      background: #ffffff;
+      color: #111111;
+    }
+
+    .print-cover-logo.large {
+      width: 260px;
+      height: auto;
+      margin-bottom: 30px;
+      background: transparent;
+      border: none;
+    }
+
+    .print-cover-logo img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      padding: 0;
+    }
+
+    .print-cover h1 {
+      margin: 0 0 14px;
+      font-size: 34px;
+      line-height: 1.1;
+      font-weight: 600;
+      color: #111111;
+    }
+
+    .print-cover h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 500;
+      color: #444444;
+    }
+
+    .print-cover-line {
+      width: 120px;
+      height: 2px;
+      background: #d9d9d9;
+      margin: 20px 0 24px;
+    }
+
+    .print-cover-meta {
+      position: absolute;
+      bottom: 30mm;
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+
+    .cover-date {
+      font-size: 13px;
+      color: #777777;
+    }
+
+    @media (max-width: 860px) {
+      .topbar,
+      .fields,
+      .options { grid-template-columns: 1fr; }
+
+      .hero { padding: 24px; }
+      .hero-header,
+      .brand-wrap { align-items: flex-start; }
+      .brand-logo { width: 72px; height: 72px; border-radius: 18px; }
+      .hero h1 { font-size: 30px; }
+      .hero-panel { width: 100%; }
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 10mm;
+      }
+
+      html, body {
+        background: #ffffff !important;
+        color: #111111 !important;
+        -webkit-print-color-adjust: economy;
+        print-color-adjust: economy;
+      }
+
+      .print-cover {
+        display: block !important;
+        page-break-after: always;
+        break-after: page;
+      }
+
+      .topbar,
+      .inline-actions,
+      .hero {
+        display: none !important;
+      }
+
+      .wrap {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .section,
+      .dynamic-item {
+        background: #ffffff !important;
+        color: #111111 !important;
+        border: 1px solid #d9d9d9 !important;
+        border-radius: 12px !important;
+        box-shadow: none !important;
+      }
+
+      .grid {
+        display: block !important;
+      }
+
+      .section {
+        margin: 0 0 10px 0 !important;
+        padding: 12px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .section h2,
+      .section p.desc,
+      .item-title,
+      label {
+        color: #111111 !important;
+        opacity: 1 !important;
+      }
+
+      .section h2 {
+        font-size: 18px !important;
+        margin: 0 0 6px 0 !important;
+        padding-bottom: 6px !important;
+        border-bottom: 1px solid #e5e5e5 !important;
+      }
+
+      .section p.desc {
+        color: #555555 !important;
+      }
+
+      .fields {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px 12px !important;
+        align-items: start !important;
+      }
+
+      .field,
+      .field-full {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 4px !important;
+      }
+
+      .field-full {
+        grid-column: 1 / -1 !important;
+      }
+
+      label {
+        font-size: 11px !important;
+        font-weight: 700 !important;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      input[type="email"],
+      input[type="tel"],
+      select,
+      textarea {
+        width: 100% !important;
+        background: #ffffff !important;
+        color: #111111 !important;
+        border: 1px solid #cfcfcf !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+        min-height: 34px !important;
+        padding: 7px 9px !important;
+        margin: 0 !important;
+      }
+
+      textarea {
+        min-height: 64px !important;
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: transparent !important;
+      }
+
+      .options {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+      }
+
+      .option {
+        background: #ffffff !important;
+        color: #111111 !important;
+        border: 1px solid #d9d9d9 !important;
+        border-radius: 8px !important;
+        padding: 6px 8px !important;
+        box-shadow: none !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="print-cover">
+      <div class="print-cover-inner">
+        <div class="print-cover-logo large">
+          <img src="logo.png" alt="Logo do escritório" />
+        </div>
+        <h1 id="coverMainName">Nome do Cliente</h1>
+        <div class="print-cover-line"></div>
+        <h2>Projeto Arquitetônico Residencial</h2>
+        <div class="print-cover-meta">
+          <div class="cover-date" id="coverDate">07 de abril de 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-header">
+        <div class="brand-wrap">
+          <div class="brand-logo">
+            <img src="logo.png" alt="Logo do escritório" />
+          </div>
+          <div class="brand-meta">
+            <h1>Projeto Arquitetônico Residencial</h1>
+            <p>Briefing completo para clientes interessados em construir, reformar, ampliar ou regularizar imóvel residencial. Preencha com calma e com o máximo de detalhes possível.</p>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <div class="hero-panel-title">Formato</div>
+          <strong>Preenchimento online + exportação em PDF</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="topbar">
+      <div class="progress-card">
+        <div class="progress-top">
+          <strong>Progresso do briefing</strong>
+          <span id="progressText">0% preenchido</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <button class="tool-btn" type="button" id="printBtn">Salvar em PDF</button>
+    </div>
+
+    <form id="briefingForm" class="grid">
+      <section class="section">
+        <h2>1. Identificação do cliente</h2>
+        <p class="desc">Informações básicas para abertura e organização do atendimento.</p>
+        <div class="fields">
+          <div class="field"><label>Nome completo</label><input type="text" name="nome_cliente"></div>
+          <div class="field"><label>Telefone / WhatsApp</label><input type="tel" name="telefone"></div>
+          <div class="field"><label>E-mail</label><input type="email" name="email"></div>
+          <div class="field"><label>Endereço atual</label><input type="text" name="endereco_atual"></div>
+          <div class="field-full"><label>Endereço do terreno ou imóvel</label><input type="text" name="endereco_imovel"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>2. Tipo de solicitação</h2>
+        <p class="desc">Selecione o tipo de projeto que melhor se encaixa no seu caso.</p>
+        <div class="fields">
+          <div class="field-full">
+            <label>Qual tipo de projeto você deseja?</label>
+            <div class="options">
+              <label class="option"><input type="checkbox" name="tipo_projeto" value="Construção nova">Construção nova</label>
+              <label class="option"><input type="checkbox" name="tipo_projeto" value="Reforma">Reforma</label>
+              <label class="option"><input type="checkbox" name="tipo_projeto" value="Ampliação">Ampliação</label>
+              <label class="option"><input type="checkbox" name="tipo_projeto" value="Regularização">Regularização</label>
+            </div>
+          </div>
+          <div class="field-full"><label>Descreva brevemente o que você deseja fazer</label><textarea name="descricao_projeto"></textarea></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>3. Informações do terreno ou imóvel</h2>
+        <p class="desc">Essas informações ajudam a entender o ponto de partida do projeto.</p>
+        <div class="fields">
+          <div class="field"><label>Área do terreno (m²)</label><input type="text" name="area_terreno"></div>
+          <div class="field"><label>Dimensões do terreno</label><input type="text" name="dimensoes_terreno" placeholder="Ex.: 10x25"></div>
+          <div class="field"><label>Topografia do terreno</label>
+            <select name="topografia_terreno">
+              <option value="">Selecione</option>
+              <option>Plano</option>
+              <option>Leve inclinação</option>
+              <option>Inclinado</option>
+              <option>Não sei informar</option>
+            </select>
+          </div>
+          <div class="field"><label>Já existe construção no local?</label>
+            <select name="construcao_existente">
+              <option value="">Selecione</option>
+              <option>Sim</option>
+              <option>Não</option>
+              <option>Parcialmente</option>
+            </select>
+          </div>
+          <div class="field-full"><label>Se já existir construção, descreva o que existe hoje</label><textarea name="descricao_existente"></textarea></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>4. Programa de necessidades</h2>
+        <p class="desc">Informe os ambientes e quantidades que você deseja no projeto.</p>
+        <div class="fields">
+          <div class="field"><label>Quantidade de quartos</label><input type="number" name="qtd_quartos"></div>
+          <div class="field"><label>Quantidade de suítes</label><input type="number" name="qtd_suites"></div>
+          <div class="field"><label>Quantidade de banheiros</label><input type="number" name="qtd_banheiros"></div>
+          <div class="field"><label>Vagas de garagem</label><input type="number" name="qtd_garagem"></div>
+          <div class="field"><label>Sala de estar</label>
+            <select name="sala_estar"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+          <div class="field"><label>Sala de jantar</label>
+            <select name="sala_jantar"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+          <div class="field"><label>Cozinha</label>
+            <select name="cozinha"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+          <div class="field"><label>Área de serviço</label>
+            <select name="area_servico"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+          <div class="field"><label>Área gourmet</label>
+            <select name="area_gourmet"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+          <div class="field"><label>Escritório / home office</label>
+            <select name="home_office"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+          <div class="field"><label>Piscina</label>
+            <select name="piscina"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+          <div class="field"><label>Lavabo</label>
+            <select name="lavabo"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+          <div class="field-full"><label>Outros ambientes ou necessidades específicas</label><textarea name="outros_ambientes"></textarea></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>5. Estilo e referências</h2>
+        <p class="desc">Ajuda a entender a linguagem visual e o gosto do cliente.</p>
+        <div class="fields">
+          <div class="field"><label>Estilo desejado</label>
+            <select name="estilo_projeto">
+              <option value="">Selecione</option>
+              <option>Moderno</option>
+              <option>Contemporâneo</option>
+              <option>Minimalista</option>
+              <option>Clássico</option>
+              <option>Rústico</option>
+              <option>Industrial</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="field"><label>Padrão pretendido</label>
+            <select name="padrao_obra">
+              <option value="">Selecione</option>
+              <option>Econômico</option>
+              <option>Médio padrão</option>
+              <option>Alto padrão</option>
+            </select>
+          </div>
+          <div class="field-full"><label>Referências, inspirações ou links</label><textarea name="referencias_esteticas"></textarea></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>6. Investimento e prazo</h2>
+        <p class="desc">Essas informações ajudam a alinhar expectativa, viabilidade e escopo.</p>
+        <div class="fields">
+          <div class="field-full">
+            <label>Como será o financiamento da obra?</label>
+            <select name="tipo_financiamento">
+              <option value="">Selecione uma opção</option>
+              <option value="proprio">Recursos próprios</option>
+              <option value="caixa">Financiamento pela Caixa Econômica</option>
+              <option value="outro">Outro tipo de financiamento</option>
+            </select>
+          </div>
+          <div class="field"><label>Valor pretendido para investir na obra</label><input type="text" name="orcamento_previsto" class="currency-input" inputmode="numeric" placeholder="R$ 0,00"></div>
+          <div class="field"><label>Esse valor já está definido?</label>
+            <select name="orcamento_definido"><option value="">Selecione</option><option>Sim</option><option>Não</option><option>Parcialmente</option></select>
+          </div>
+          <div class="field"><label>Quando pretende iniciar?</label><input type="text" name="prazo_inicio"></div>
+          <div class="field"><label>Existe urgência?</label>
+            <select name="urgencia"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>7. Situação documental</h2>
+        <p class="desc">Marque os documentos que se encaixam no seu caso e os que você já possui.</p>
+        <div class="fields">
+          <div class="field-full">
+            <label>Tipo de processo</label>
+            <select name="tipo_aprovacao_implurb">
+              <option value="">Selecione</option>
+              <option>Aprovação de Projeto sem Licença Residencial Unifamiliar</option>
+            </select>
+          </div>
+          <div class="field-full">
+            <label>Marque os documentos que você já possui</label>
+            <div class="options">
+              <label class="option"><input type="checkbox" name="docs_implurb" value="Certidão Narrativa de Registro de Imóveis">Certidão Narrativa de Registro de Imóveis</label>
+              <label class="option"><input type="checkbox" name="docs_implurb" value="Título Definitivo">Título Definitivo</label>
+              <label class="option"><input type="checkbox" name="docs_implurb" value="Escritura Pública">Escritura Pública</label>
+              <label class="option"><input type="checkbox" name="docs_implurb" value="Documento que comprove a posse do terreno por mais de 05 anos">Documento que comprove a posse do terreno por mais de 05 anos</label>
+              <label class="option"><input type="checkbox" name="docs_implurb" value="Matrícula do IPTU ou documento de isenção">Matrícula do IPTU ou documento de isenção</label>
+            </div>
+          </div>
+          <div class="field-full"><label>Observações sobre documentação</label><textarea name="observacoes_documentacao"></textarea></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>8. Projetos complementares e serviços técnicos</h2>
+        <p class="desc">Selecione os serviços complementares de seu interesse.</p>
+        <div class="fields">
+          <div class="field-full">
+            <div class="options">
+              <label class="option"><input type="checkbox" name="projetos_complementares" value="Projeto elétrico">Projeto elétrico</label>
+              <label class="option"><input type="checkbox" name="projetos_complementares" value="Projeto hidráulico">Projeto hidráulico</label>
+              <label class="option"><input type="checkbox" name="projetos_complementares" value="Projeto hidrossanitário">Projeto hidrossanitário</label>
+              <label class="option"><input type="checkbox" name="projetos_complementares" value="Sondagem">Sondagem</label>
+              <label class="option"><input type="checkbox" name="projetos_complementares" value="Topografia">Topografia</label>
+              <label class="option"><input type="checkbox" name="projetos_complementares" value="Estrutural">Projeto estrutural</label>
+              <label class="option"><input type="checkbox" name="projetos_complementares" value="Paisagismo">Paisagismo</label>
+              <label class="option"><input type="checkbox" name="projetos_complementares" value="Interiores">Projeto de interiores</label>
+            </div>
+          </div>
+          <div class="field-full"><label>Outros serviços que considera necessários</label><textarea name="outros_servicos"></textarea></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>9. Ampliação, reforma ou intervenção existente</h2>
+        <p class="desc">Se o seu caso não for uma construção do zero, detalhe aqui a intervenção desejada.</p>
+        <div class="fields">
+          <div class="field"><label>Seu caso envolve ampliação?</label>
+            <select name="envolve_ampliacao"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+          <div class="field"><label>Seu caso envolve reforma?</label>
+            <select name="envolve_reforma"><option value="">Selecione</option><option>Sim</option><option>Não</option></select>
+          </div>
+          <div class="field-full"><label>Descreva o que pretende manter, demolir, ampliar ou transformar</label><textarea name="descricao_intervencao"></textarea></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>10. Observações finais</h2>
+        <p class="desc">Use esse espaço para acrescentar qualquer informação importante para o desenvolvimento do projeto.</p>
+        <div class="fields">
+          <div class="field-full"><label>Observações</label><textarea name="observacoes_finais"></textarea></div>
+        </div>
+      </section>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('briefingForm');
+    const coverMainName = document.getElementById('coverMainName');
+    const coverDate = document.getElementById('coverDate');
+    const fill = document.getElementById('progressFill');
+    const text = document.getElementById('progressText');
+    const printBtn = document.getElementById('printBtn');
+
+    function getFields() {
+      return Array.from(form.querySelectorAll('input, textarea, select'));
+    }
+
+    function updateProgress() {
+      const fields = getFields();
+      const names = [...new Set(fields.map((f) => f.name).filter(Boolean))];
+      let answered = 0;
+
+      names.forEach((name) => {
+        const group = fields.filter((f) => f.name === name);
+        const type = group[0]?.type;
+
+        if (type === 'checkbox' || type === 'radio') {
+          if (group.some((f) => f.checked)) answered += 1;
+        } else if (group.some((f) => String(f.value).trim() !== '')) {
+          answered += 1;
+        }
+      });
+
+      const pct = names.length ? Math.round((answered / names.length) * 100) : 0;
+      if (fill) fill.style.width = pct + '%';
+      if (text) text.textContent = pct + '% preenchido';
+    }
+
+    function formatCurrentDatePtBR() {
+      const now = new Date();
+      return now.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      });
+    }
+
+    function updatePrintCover() {
+      const clientInput = form.querySelector('input[name="nome_cliente"]');
+      const clientName = clientInput && clientInput.value.trim()
+        ? clientInput.value.trim()
+        : 'Nome do Cliente';
+
+      if (coverMainName) coverMainName.textContent = clientName;
+      if (coverDate) coverDate.textContent = formatCurrentDatePtBR();
+    }
+
+    function formatCurrencyBRL(value) {
+      const digits = String(value).replace(/\D/g, '');
+      if (!digits) return '';
+      const numberValue = Number(digits) / 100;
+      return numberValue.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      });
+    }
+
+    function bindCurrencyInputs() {
+      const currencyInputs = form.querySelectorAll('.currency-input');
+      currencyInputs.forEach((input) => {
+        input.addEventListener('input', (event) => {
+          event.target.value = formatCurrencyBRL(event.target.value);
+        });
+
+        input.addEventListener('blur', (event) => {
+          event.target.value = formatCurrencyBRL(event.target.value);
+        });
+      });
+    }
+
+    function handlePrint() {
+      try {
+        updatePrintCover();
+        window.focus();
+        setTimeout(() => {
+          window.print();
+        }, 80);
+      } catch (error) {
+        console.error('Erro ao abrir impressão:', error);
+        alert('Não foi possível abrir a impressão automaticamente. Use Ctrl+P para salvar em PDF.');
+      }
+    }
+
+    if (printBtn) {
+      printBtn.addEventListener('click', handlePrint);
+    }
+
+    form.addEventListener('input', () => {
+      bindCurrencyInputs();
+    updateProgress();
+    updatePrintCover();
+    });
+
+    form.addEventListener('change', () => {
+      updateProgress();
+      updatePrintCover();
+    });
+
+    updateProgress();
+    updatePrintCover();
+
+    console.assert(typeof updateProgress === 'function', 'updateProgress should be defined');
+    console.assert(typeof handlePrint === 'function', 'handlePrint should be defined');
+    console.assert(!!form, 'briefingForm should exist');
+  </script>
+</body>
+</html>
